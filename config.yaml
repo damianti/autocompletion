@@ -1,0 +1,103 @@
+# Autocomplete System Configuration
+# Author: Team 3
+# Date: 2024
+
+# Data configuration
+data:
+  # Directory where data files are located
+  directory: "./Archive"
+  
+  # File extensions to process
+  file_extensions: 
+    - ".txt"
+    - ".md"
+  
+  # File encoding
+  encoding: "utf-8"
+  
+  # Maximum file size to process (in MB)
+  max_file_size_mb: 100
+
+# Performance configuration
+performance:
+  # Maximum memory to use (in MB)
+  max_memory_mb: 4096
+  
+  # Batch size for processing
+  batch_size: 1000
+  
+  # Number of workers for parallel processing
+  num_workers: 4
+  
+  # Maximum search time (in seconds)
+  max_search_time: 30
+
+# Scoring system configuration
+scoring:
+  # Maximum number of results to return
+  max_results: 5
+  
+  # Penalty weights by error type
+  penalty_weights:
+    substitution: 1.0
+    addition: 2.0
+    deletion: 2.0
+  
+  # Bonus factor for exact matches
+  exact_match_bonus: 1.5
+  
+  # Position penalty factor
+  position_penalty_factor: 0.1
+
+# Logging configuration
+logging:
+  # Logging level
+  level: "INFO"
+  
+  # Log file
+  file: "logs/application.log"
+  
+  # Maximum log file size (in MB)
+  max_size_mb: 100
+  
+  # Number of backup files
+  backup_count: 5
+  
+  # Log format
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+# User interface configuration
+ui:
+  # Show emojis in interface
+  show_emojis: true
+  
+  # Show colors in terminal
+  show_colors: true
+  
+  # Show progress bar
+  show_progress: true
+  
+  # User input timeout (in seconds)
+  input_timeout: 300
+
+# Cache configuration
+cache:
+  # Enable result caching
+  enabled: true
+  
+  # Maximum cache size (in MB)
+  max_size_mb: 512
+  
+  # Cache time to live (in seconds)
+  ttl: 3600
+
+# Monitoring configuration
+monitoring:
+  # Enable memory monitoring
+  memory_monitoring: true
+  
+  # Enable performance profiling
+  performance_profiling: true
+  
+  # Monitoring interval (in seconds)
+  monitoring_interval: 60 
