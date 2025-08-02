@@ -310,6 +310,14 @@ def main():
                     print("👋 Goodbye!")
                     break
                 
+                # Validate input using new utility function
+                from utils import TextUtils
+                is_valid, error_msg = TextUtils.validate_input(user_input, min_length=1, max_length=500)
+                
+                if not is_valid:
+                    print(f"⚠️  {error_msg}")
+                    continue
+                
                 if not user_input:
                     print("⚠️  Please enter some text")
                     continue

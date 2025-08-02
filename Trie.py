@@ -9,7 +9,7 @@ Author: Team 3
 Date: 2024
 """
 
-from typing import Dict, List, Optional, Set
+from typing import Dict, List, Optional, Set, Tuple
 from dataclasses import dataclass
 
 
@@ -260,4 +260,94 @@ class Trie:
         self.root = TrieNode('')
         self.total_words = 0
         self.total_nodes = 1
+
+    def search_similar_words(self, word: str, max_distance: int = 2) -> List[Tuple[str, int]]:
+        """
+        Searches for words similar to the given word within a maximum distance
+        
+        Args:
+            word: Word to search for
+            max_distance: Maximum Levenshtein distance allowed
+            
+        Returns:
+            List of tuples with (word, distance) sorted by distance
+        """
+        if not word:
+            return []
+        
+        similar_words = []
+        
+        # Get all words from the Trie
+        all_words = self._get_all_words()
+        
+        for trie_word in all_words:
+            distance = self._levenshtein_distance(word, trie_word)
+            if distance <= max_distance:
+                similar_words.append((trie_word, distance))
+        
+        # Sort by distance and then alphabetically
+        similar_words.sort(key=lambda x: (x[1], x[0]))
+        return similar_words
+    
+    def _get_all_words(self) -> List[str]:
+        """
+        Gets all words stored in the Trie
+        
+        Returns:
+            List of all words
+        """
+        words = []
+        self._collect_all_words(self.root, "", words)
+        return words
+    
+    def _collect_all_words(self, node: TrieNode, current_word: str, words: List[str]) -> None:
+        """
+        Recursively collects all words from the Trie
+        
+        Args:
+            node: Current Trie node
+            current_word: Current word being built
+            words: List to store collected words
+        """
+        if node.is_end_of_word:
+            words.append(current_word)
+        
+        for char, child in node.children.items():
+            self._collect_all_words(child, current_word + char, words)
+    
+    def get_word_frequency(self, word: str) -> int:
+        """
+        Gets the frequency of a word (number of sentences containing it)
+        
+        Args:
+            word: Word to check
+            
+        Returns:
+            Number of sentences containing the word
+        """
+        node = self.search(word)
+        if node:
+            return len(node.sentences_id)
+        return 0
+    
+    def get_most_common_words(self, limit: int = 10) -> List[Tuple[str, int]]:
+        """
+        Gets the most common words in the Trie
+        
+        Args:
+            limit: Maximum number of words to return
+            
+        Returns:
+            List of tuples with (word, frequency) sorted by frequency
+        """
+        word_frequencies = []
+        all_words = self._get_all_words()
+        
+        for word in all_words:
+            frequency = self.get_word_frequency(word)
+            word_frequencies.append((word, frequency))
+        
+        # Sort by frequency (descending) and then alphabetically
+        word_frequencies.sort(key=lambda x: (-x[1], x[0]))
+        return word_frequencies[:limit]
 

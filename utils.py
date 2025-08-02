@@ -242,6 +242,81 @@ class TextUtils:
         
         return intersection / union if union > 0 else 0.0
 
+    @staticmethod
+    def validate_input(text: str, min_length: int = 1, max_length: int = 1000) -> Tuple[bool, str]:
+        """
+        Validates user input text
+        
+        Args:
+            text: Text to validate
+            min_length: Minimum allowed length
+            max_length: Maximum allowed length
+            
+        Returns:
+            Tuple with (is_valid, error_message)
+        """
+        if not text:
+            return False, "Input cannot be empty"
+        
+        if len(text) < min_length:
+            return False, f"Input must be at least {min_length} characters long"
+        
+        if len(text) > max_length:
+            return False, f"Input cannot exceed {max_length} characters"
+        
+        # Check for valid characters (letters, numbers, spaces, basic punctuation)
+        import re
+        if not re.match(r'^[a-zA-Z0-9\s.,!?-]+$', text):
+            return False, "Input contains invalid characters"
+        
+        return True, ""
+    
+    @staticmethod
+    def format_file_size(size_bytes: int) -> str:
+        """
+        Formats file size in human readable format
+        
+        Args:
+            size_bytes: Size in bytes
+            
+        Returns:
+            Formatted size string
+        """
+        if size_bytes == 0:
+            return "0 B"
+        
+        size_names = ["B", "KB", "MB", "GB", "TB"]
+        import math
+        i = int(math.floor(math.log(size_bytes, 1024)))
+        p = math.pow(1024, i)
+        s = round(size_bytes / p, 2)
+        return f"{s} {size_names[i]}"
+    
+    @staticmethod
+    def get_system_stats() -> Dict[str, Any]:
+        """
+        Gets comprehensive system statistics
+        
+        Returns:
+            Dictionary with system statistics
+        """
+        import platform
+        
+        return {
+            'platform': platform.system(),
+            'platform_version': platform.version(),
+            'architecture': platform.architecture()[0],
+            'processor': platform.processor(),
+            'python_version': platform.python_version(),
+            'cpu_count': psutil.cpu_count(),
+            'cpu_percent': psutil.cpu_percent(interval=1),
+            'memory_total': psutil.virtual_memory().total,
+            'memory_available': psutil.virtual_memory().available,
+            'memory_percent': psutil.virtual_memory().percent,
+            'disk_usage': psutil.disk_usage('/').percent,
+            'disk_free': psutil.disk_usage('/').free
+        }
+
 
 class FileUtils:
     """File handling utilities"""

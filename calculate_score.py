@@ -206,6 +206,7 @@ class ScoreCalculator:
         if len(s2) == 0:
             return len(s1)
         
+        # Use dynamic programming for better performance
         previous_row = list(range(len(s2) + 1))
         for i, c1 in enumerate(s1):
             current_row = [i + 1]
@@ -217,6 +218,80 @@ class ScoreCalculator:
             previous_row = current_row
         
         return previous_row[-1]
+    
+    def calculate_similarity_score(self, word1: str, word2: str) -> float:
+        """
+        Calculates similarity score between two words (0.0 to 1.0)
+        
+        Args:
+            word1: First word
+            word2: Second word
+            
+        Returns:
+            Similarity score between 0.0 (completely different) and 1.0 (identical)
+        """
+        if not word1 or not word2:
+            return 0.0
+        
+        if word1 == word2:
+            return 1.0
+        
+        # Calculate Levenshtein distance
+        distance = self._basic_levenshtein_distance(word1, word2)
+        
+        # Calculate similarity based on distance and word lengths
+        max_length = max(len(word1), len(word2))
+        if max_length == 0:
+            return 1.0
+        
+        # Normalize distance and convert to similarity
+        similarity = 1.0 - (distance / max_length)
+        
+        # Apply bonus for words with similar lengths
+        length_diff = abs(len(word1) - len(word2))
+        length_penalty = length_diff / max_length * 0.1
+        
+        return max(0.0, similarity - length_penalty)
+    
+    def get_word_variations(self, word: str) -> List[str]:
+        """
+        Generates common word variations for fuzzy matching
+        
+        Args:
+            word: Base word
+            
+        Returns:
+            List of word variations
+        """
+        if not word:
+            return []
+        
+        variations = [word]
+        
+        # Add common typos and variations
+        for i in range(len(word)):
+            # Character substitutions
+            for char in 'abcdefghijklmnopqrstuvwxyz':
+                if char != word[i]:
+                    variation = word[:i] + char + word[i+1:]
+                    variations.append(variation)
+            
+            # Character deletions
+            if len(word) > 1:
+                variation = word[:i] + word[i+1:]
+                variations.append(variation)
+            
+            # Character insertions
+            for char in 'abcdefghijklmnopqrstuvwxyz':
+                variation = word[:i] + char + word[i:]
+                variations.append(variation)
+        
+        # Add character at the end
+        for char in 'abcdefghijklmnopqrstuvwxyz':
+            variation = word + char
+            variations.append(variation)
+        
+        return list(set(variations))  # Remove duplicates
     
     def update_results_list(self, results_list: List[AutoCompleteData], 
                            new_data: AutoCompleteData, min_top_score: float) -> Tuple[List[AutoCompleteData], float]:
